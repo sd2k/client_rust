@@ -11,12 +11,12 @@ use tide::{Middleware, Next, Request, Result};
 async fn main() -> std::result::Result<(), std::io::Error> {
     tide::log::start();
 
-    let mut registry = Registry::default();
+    let mut registry = <Registry>::default();
     let http_requests_total = Family::<Labels, Counter>::default();
     registry.register(
         "http_requests_total",
         "Number of HTTP requests",
-        http_requests_total.clone(),
+        Box::new(http_requests_total.clone()),
     );
 
     let middleware = MetricsMiddleware {
@@ -57,7 +57,7 @@ enum Method {
 
 #[derive(Clone)]
 struct State {
-    registry: Arc<Registry<Family<Labels, Counter>>>,
+    registry: Arc<Registry>,
 }
 
 #[derive(Default)]
